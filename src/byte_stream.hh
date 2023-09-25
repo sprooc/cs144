@@ -4,7 +4,6 @@
 #include <stdexcept>
 #include <string>
 #include <string_view>
-
 class Reader;
 class Writer;
 
@@ -12,11 +11,17 @@ class ByteStream
 {
 protected:
   uint64_t capacity_;
+  queue<string> buffer;
+  uint64_t buffer_size = 0;
+  uint64_t push_bytes = 0;
+  uint64_t pop_bytes = 0;
+  bool error = false;
+  bool closed = false; 
   // Please add any additional state to the ByteStream here, and not to the Writer and Reader interfaces.
 
 public:
   explicit ByteStream( uint64_t capacity );
-
+  
   // Helper functions (provided) to access the ByteStream's Reader and Writer interfaces
   Reader& reader();
   const Reader& reader() const;
