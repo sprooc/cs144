@@ -1,6 +1,6 @@
-#include <stdexcept>
-
 #include "byte_stream.hh"
+#include <iostream>
+#include <stdexcept>
 
 using namespace std;
 
@@ -8,13 +8,14 @@ ByteStream::ByteStream( uint64_t capacity ) : capacity_( capacity ) {}
 
 void Writer::push( string data )
 {
-  if(closed) return;
-  data.erase(data.begin() + available_capacity(), data.end());
-  buffer.push(data);
-  buffer_size += data.size();
-  push_bytes += date.size();
+  if(closed) { return; }
+	uint64_t size = data.size() < available_capacity() ? data.size() : available_capacity();
+	if(size == 0) { return; }
+	buffer.push(data);
+	buffer_view.push(string_view(buffer.back().begin(), buffer.back().begin() + size));
+  buffer_size += size;
+  push_bytes += size;
   (void)data;
-  return;
 }
 
 void Writer::close()
@@ -45,8 +46,7 @@ uint64_t Writer::bytes_pushed() const
 
 string_view Reader::peek() const
 {
-  string_view str_v(buffer.front(), 1);
-  return str_v;
+  return buffer_view.front();
 }
 
 bool Reader::is_finished() const
@@ -62,18 +62,23 @@ bool Reader::has_error() const
 void Reader::pop( uint64_t len )
 {
   while(len > 0) {
-    string& bf = buffer.front();
-    uint64_t fs_len = bf.size();
+    string_view& bvf = buffer_view.front();
+    const uint64_t fs_len = bvf.size();
     if(fs_len <= len) {
       buffer.pop();
+			buffer_view.pop();
       len -= fs_len;
       buffer_size -= fs_len;
-      pop_size += fs_len;
+      pop_bytes += fs_len;
     } else {
-      bf.erase(bf.begin(), bf.begin() + len);
+			bvf.remove_prefix(len);
       buffer_size -= len;
-      pop_size += len;
+      pop_bytes += len;
       len = 0;
+			if(bvf.empty()) {
+			 	buffer.pop();
+				buffer_view.pop();
+			}
     }
   }
  

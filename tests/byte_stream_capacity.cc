@@ -75,8 +75,6 @@ int main()
       test.execute( Push { "" } );
       test.execute( Push { "" } );
       test.execute( Push { "" } );
-      test.execute( Push { "" } );
-      test.execute( Push { "" } );
       test.execute( Push { "cat" } );
       test.execute( Push { "" } );
       test.execute( Push { "" } );

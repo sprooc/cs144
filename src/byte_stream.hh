@@ -11,7 +11,8 @@ class ByteStream
 {
 protected:
   uint64_t capacity_;
-  queue<string> buffer;
+	std::queue<std::string> buffer = {};
+	std::queue<std::string_view> buffer_view = {};
   uint64_t buffer_size = 0;
   uint64_t push_bytes = 0;
   uint64_t pop_bytes = 0;
@@ -40,6 +41,7 @@ public:
   bool is_closed() const;              // Has the stream been closed?
   uint64_t available_capacity() const; // How many bytes can be pushed to the stream right now?
   uint64_t bytes_pushed() const;       // Total number of bytes cumulatively pushed to the stream
+	uint64_t size() const { return capacity_; }
 };
 
 class Reader : public ByteStream

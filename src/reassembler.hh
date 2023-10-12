@@ -3,9 +3,17 @@
 #include "byte_stream.hh"
 
 #include <string>
-
+#include <vector>
 class Reassembler
 {
+private:
+	uint64_t window_first_index = 0;
+	uint64_t window_size = 0;
+  std::vector<char> window = {};
+  std::vector<bool> flags = {};	
+	bool last_in = false;
+	uint64_t begin = 0;
+	uint64_t capacity_ = 0;
 public:
   /*
    * Insert a new substring to be reassembled into a ByteStream.
